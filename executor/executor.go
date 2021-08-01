@@ -1,41 +1,47 @@
 package executor
 
 import (
-	"github.com/anisbhsl/auth-server/routes"
-	"github.com/anisbhsl/auth-server/utils"
 	"fmt"
-	"log"
+	"github.com/anisbhsl/auth-server/api"
+	"github.com/anisbhsl/auth-server/auth"
+	"github.com/anisbhsl/auth-server/logger"
+	"github.com/anisbhsl/auth-server/routes"
+	"github.com/anisbhsl/auth-server/store"
+	"github.com/anisbhsl/auth-server/utils"
 	"net/http"
 	"time"
 )
 
 var (
-	timeout=15*time.Second
+	timeout = 15 * time.Second
 )
 
-type Executor struct{
-	config *utils.AppConfig
+type Executor struct {
+	Config *utils.AppConfig
+	Api    api.Service
 }
 
-func NewExecutor(config *utils.AppConfig) *Executor{
+func NewExecutor(config *utils.AppConfig) *Executor {
 	return &Executor{
-		config: config,
+		Config: config,
+		Api:api.New(auth.New(config.SecretKey),store.New()),
 	}
 }
 
-func (e *Executor) Execute(){
+func (ex *Executor) Execute() {
 	//initialize store connection
 
 	//spin up server
-	srv:=&http.Server{
-		Addr:              fmt.Sprintf("%s:%s",e.config.HostAddr,e.config.Port),
-		ReadTimeout:       timeout,
-		WriteTimeout:      timeout,
-		IdleTimeout:       timeout,
-		Handler: routes.RegisterRoutes(),
+	srv := &http.Server{
+		Addr:         fmt.Sprintf("%s:%s", ex.Config.HostAddr, ex.Config.Port),
+		ReadTimeout:  timeout,
+		WriteTimeout: timeout,
+		IdleTimeout:  timeout,
+		Handler:      routes.RegisterRoutes(ex.Api),
 	}
-	log.Print("Starting API Server")
-	if err:=srv.ListenAndServe();err!=nil{
-		log.Fatal(err)
+
+	logger.Debug("Starting API Server")
+	if err := srv.ListenAndServe(); err != nil {
+		panic(err)
 	}
 }

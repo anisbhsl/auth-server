@@ -1,10 +1,18 @@
 package main
 
 import (
-	"github.com/anisbhsl/auth-server/executor"
-	"github.com/anisbhsl/auth-server/utils"
 	"flag"
+	"github.com/anisbhsl/auth-server/executor"
+	"github.com/anisbhsl/auth-server/logger"
+	"github.com/anisbhsl/auth-server/utils"
+	"os"
 )
+
+func init(){
+	logger.NewLogger(logger.Config{
+		Service:  "auth-server",
+	})
+}
 
 func main(){
 	host:=flag.String("host","127.0.0.1","host address")
@@ -15,9 +23,7 @@ func main(){
 	utils.AppParams=&utils.AppConfig{
 		HostAddr:  *host,
 		Port:      *port,
-		StoreName: "",
-		StoreAddr: "",
-		SecretKey: "",
+		SecretKey: os.Getenv("APP_SECRET"),
 		ApiBase:   *apiBase,
 	}
 

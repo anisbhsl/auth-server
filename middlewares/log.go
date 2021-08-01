@@ -1,15 +1,18 @@
 package middlewares
 
 import (
-	"fmt"
-	"log"
+	"context"
+	"github.com/anisbhsl/auth-server/logger"
+	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"net/http"
 )
 
 func LoggingMiddleware(next http.Handler) http.Handler{
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-		log.Println(fmt.Sprintf("Path: %s | Method: %s",r.URL.Path,r.Method))
-		next.ServeHTTP(w,r)
+		traceID:=uuid.New().String()
+		logger.Info("Request Received",zap.String("Path",r.URL.Path),zap.String("Method",r.Method),zap.String("traceID",traceID))
+		next.ServeHTTP(w,r.WithContext(context.WithValue(r.Context(),"traceID",traceID)))
 	})
 }
 
