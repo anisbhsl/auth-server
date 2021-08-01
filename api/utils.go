@@ -10,7 +10,8 @@ var (
 	CodeInvalidRegistrationData = "invalid_registration_data"
 	CodeInvalidRefreshTokenData = "invalid_refresh_token_data"
 	CodeErrorTokenGeneration    = "error_token_generation"
-	CodeInvalidToken="invalid_token"
+	CodeInvalidToken            = "invalid_token"
+	CodeEmailAlreadyExists      = "email_already_exists"
 )
 
 func SendErrorResponse(w http.ResponseWriter, errorMessage interface{}) {

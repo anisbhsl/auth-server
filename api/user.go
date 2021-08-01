@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+//GetMeUser provides user profile of authenticated user
 func (s service) GetMeUser() http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request){
 		userID,ok:=r.Context().Value("identity").(string)
@@ -23,7 +24,6 @@ func (s service) GetMeUser() http.HandlerFunc{
 			SendErrorResponse(w,errMsg)
 			return
 		}
-
 		SendSuccessResponse(w,map[string]interface{}{
 			"id":user.ID,
 			"email":user.Email,
@@ -44,6 +44,18 @@ func (s service) RegisterUser() http.HandlerFunc{
 			return
 		}
 
+		existingUser,err:=s.Store.GetUserByEmail(registerUserRequest.Email)
+		if err!=nil{
+			errMsg:=fmt.Sprintf("%v",err)
+			logger.Error(errMsg,logger.TraceRequestWithContext(r.Context()))
+			SendErrorResponse(w,errMsg)
+			return
+		}else if existingUser.Email==registerUserRequest.Email{
+			logger.Error(CodeEmailAlreadyExists,logger.TraceRequestWithContext(r.Context()))
+			SendErrorResponse(w,CodeEmailAlreadyExists)
+			return
+		}
+
 		user:=models.User{
 			ID:       s.IDGenerator.UserId(),
 			Email:    registerUserRequest.Email,
@@ -58,6 +70,7 @@ func (s service) RegisterUser() http.HandlerFunc{
 			errMsg:=fmt.Sprintf("%v",err)
 			logger.Error(errMsg,logger.TraceRequestWithContext(r.Context()))
 			SendErrorResponse(w,errMsg)
+			return
 		}
 		SendSuccessResponse(w,map[string]interface{}{
 			"id":id,

@@ -27,11 +27,11 @@ func (s service) Login() http.HandlerFunc{
 		}
 
 		if !s.AuthService.ValidatePasswordHash(loginRequest.Password,user.PasswordHash){
-			SendUnauthorizedResponse(w)
+			SendErrorResponse(w,CodeInvalidLoginCredentials)
 			return
 		}
 
-		token,err:=s.AuthService.GenerateToken()
+		token,err:=s.AuthService.GenerateToken(user.Email)
 		if err!=nil{
 			logger.Error(fmt.Sprintf("%v",err),logger.TraceRequestWithContext(r.Context()))
 			SendErrorResponse(w,CodeErrorTokenGeneration)
