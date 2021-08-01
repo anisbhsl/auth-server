@@ -24,7 +24,8 @@ func TestGetMeUser(t *testing.T) {
 	r.HandleFunc("/api/v1/me",service.GetMeUser()).Methods("GET")
 	out := httptest.NewRecorder()
 	in:=httptest.NewRequest("GET","/api/v1/me",nil)
-	r.ServeHTTP(out,in.WithContext(context.WithValue(in.Context(),"identity",store.User.ID)))
+	in.Header.Add("Authorization","Bearer access_123")
+	r.ServeHTTP(out,in.WithContext(context.WithValue(in.Context(),"email",store.User.Email)))
 	assert.Equal(t,200,out.Code)
 	assert.JSONEq(t,`{"data":{"about":"I am software dev!","email":"bhusal.anish12@gmail.com","id":"user_3lKRPAqj-AHFgjvkH3L_4","location":"Kathmandu"},"success":true}`,out.Body.String())
 }

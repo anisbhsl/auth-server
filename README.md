@@ -2,23 +2,25 @@ auth-server
 ------------------
 
 A simple JWT based auth server that lets user to register, login and fetch user profile.
-This project uses `JWT` for authentication and `sqlite` for storing user info.
+This project uses `JWT` for authentication (RSA signing method) and `sqlite` for storing user info.
 
-Example Run:
+**How to Run?**
 ```
-export APP_SECRET=<app_secret_key> ; go run main.go --host=127.0.0.1 --port=5000
+APP_SECRET=<your_app_secret> make run-app
 ```
-API server will run at: `127.0.0.1:5000`
-
-Run using docker:
-```
-docker build .
-docker run -p 5000:5000 -e APP_SECRET=<app_secret_key> <imageTag>
-```
+*API server will run at: `127.0.0.1:5000`*
 
 
-Run tests:
+**Run tests:**
 ```
-go test ./...
+make test
 ```
 
+**API Info**
+
+| Endpoint | Body Fields | Method| Remarks |
+|----------|------|--------|--------|
+| `api/v1/register-user` | `name`, `email`, `location`, `about`, `password`| POST| Password is saved in encrypted format|
+| `/api/v1/auth/login`| `email`, `password` | POST | |
+| `/api/v1/auth/refresh-token`| `refresh-token` | POST||
+| `api/v1/me`| | GET| Use token in Authorization Header for User Profile|

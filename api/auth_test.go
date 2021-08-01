@@ -17,8 +17,9 @@ func TestLogin(t *testing.T) {
 		Name:         "Anish Bhusal",
 		Location:     "Kathmandu",
 		About:        "I am software dev!",
+		PasswordHash: "letmeinplease",
 	}}
-	service := New(mock.AuthService{},store)
+	service := New(mock.AuthService{AccessToken: "213",RefreshToken: "123"},store)
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v1/auth/login", service.Login()).Methods("POST")
 	out := httptest.NewRecorder()
@@ -33,7 +34,7 @@ func TestLogin(t *testing.T) {
 }
 
 func TestRefreshToken(t *testing.T){
-	service := New(mock.AuthService{},mock.Store{})
+	service := New(mock.AuthService{AccessToken: "213",RefreshToken: "123"},mock.Store{})
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v1/auth/refresh-token", service.Login()).Methods("POST")
 	out := httptest.NewRecorder()

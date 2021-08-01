@@ -1,12 +1,13 @@
 package auth
 
 import (
+	"github.com/anisbhsl/auth-server/mock"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestPasswordValidation(t *testing.T) {
-	authService := New("IAMSECRET")
+	authService := mock.AuthService{}
 
 	passwordValidationTests := []struct {
 		rawPass    string

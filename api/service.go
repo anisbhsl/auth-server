@@ -13,6 +13,8 @@ type Service interface {
 	RefreshToken() http.HandlerFunc
 	GetMeUser() http.HandlerFunc
 	RegisterUser() http.HandlerFunc
+	LoggingMiddleware(next http.Handler) http.Handler
+	AuthMiddleware(next http.Handler) http.Handler
 }
 
 type service struct {

@@ -2,16 +2,10 @@ package routes
 
 import (
 	"github.com/anisbhsl/auth-server/api"
-	"github.com/anisbhsl/auth-server/middlewares"
 	"github.com/anisbhsl/auth-server/utils"
 	"github.com/gorilla/mux"
 	chain "github.com/justinas/alice"
 	"net/http"
-)
-
-var(
-	loggingMiddleware=middlewares.LoggingMiddleware
-	authMiddleware=middlewares.AuthMiddleware
 )
 
 var httpMethods = struct {
@@ -58,7 +52,7 @@ var routes = func(api api.Service) map[string]routeConfig {
 		"/me":{
 			Handler:     api.GetMeUser(),
 			Methods:     []string{httpMethods.GET},
-			Middlewares: []chain.Constructor{authMiddleware},
+			Middlewares: []chain.Constructor{api.AuthMiddleware},
 		},
 		"/register-user":{
 			Handler: api.RegisterUser(),
@@ -79,7 +73,7 @@ var routes = func(api api.Service) map[string]routeConfig {
 
 func RegisterRoutes(api api.Service) http.Handler{
 	r := mux.NewRouter().PathPrefix(utils.AppParams.ApiBase).Subrouter()
-	r.Use(loggingMiddleware)
+	r.Use(api.LoggingMiddleware)
 	for path, config := range routes(api) {
 		r.Handle(path, chain.New(config.Middlewares...).Then(config.Handler)).Methods(config.Methods...)
 	}

@@ -24,7 +24,7 @@ type Executor struct {
 func NewExecutor(config *utils.AppConfig) *Executor {
 	return &Executor{
 		Config: config,
-		Api:api.New(auth.New(config.SecretKey),store.New()),
+		Api:api.New(auth.New(config.SecretKey,config.PrivateKeyPath,config.PublicKeyPath),store.New()),
 	}
 }
 

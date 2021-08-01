@@ -11,13 +11,13 @@ import (
 //GetMeUser provides user profile of authenticated user
 func (s service) GetMeUser() http.HandlerFunc{
 	return func(w http.ResponseWriter, r *http.Request){
-		userID,ok:=r.Context().Value("identity").(string)
+		email,ok:=r.Context().Value("email").(string)
 		if !ok{
 			SendErrorResponse(w,CodeInvalidToken)
 			return
 		}
 
-		user,err:=s.Store.GetUserDetail(userID)
+		user,err:=s.Store.GetUserByEmail(email)
 		if err!=nil{
 			errMsg:=fmt.Sprintf("%v",err)
 			logger.Error(errMsg,logger.TraceRequestWithContext(r.Context()))

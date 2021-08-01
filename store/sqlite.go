@@ -12,7 +12,7 @@ type store struct{
 }
 
 func New() Service{
-	db,err:=sql.Open("sqlite3","./auth.db")
+	db,err:=sql.Open("sqlite3","auth.db")
 	if err!=nil{
 		panic(err)
 	}

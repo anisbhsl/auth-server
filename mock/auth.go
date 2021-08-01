@@ -1,33 +1,33 @@
 package mock
 
 import (
-	"github.com/anisbhsl/auth-server/auth"
 	"github.com/anisbhsl/auth-server/models"
-	"github.com/square/go-jose/v3/jwt"
+	"github.com/golang-jwt/jwt"
 )
 
 type AuthService struct{
-
+	AccessToken string
+	RefreshToken string
 }
 
 func (a AuthService) GenerateToken(email string) (models.Token, error){
 	return models.Token{
-		AccessToken:  "213",
-		RefreshToken: "123",
+		AccessToken:  a.AccessToken,
+		RefreshToken: a.RefreshToken,
 	},nil
 }
 
-func (a AuthService) VerifyToken(signedJWT string) (*auth.UserClaims,error){
-	return &auth.UserClaims{
-		Claims: jwt.Claims{},
+func (a AuthService) VerifyToken(signedJWT string) (*models.UserClaims,error){
+	return &models.UserClaims{
+		StandardClaims: jwt.StandardClaims{},
 		Email:  "test@test.com",
 	},nil
 }
 
 func (a AuthService) TokenRefresh(token string) (models.Token, error){
 	return models.Token{
-		AccessToken:  "213",
-		RefreshToken: "123",
+		AccessToken:  a.AccessToken,
+		RefreshToken: a.RefreshToken,
 	},nil
 }
 
@@ -36,5 +36,5 @@ func (a AuthService) EncryptPassword(src string) string{
 }
 
 func (a AuthService) ValidatePasswordHash(raw string, hash string) bool{
-	return true
+	return raw==hash
 }
