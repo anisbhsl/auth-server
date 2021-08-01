@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/anisbhsl/auth-server/logger"
 	"github.com/anisbhsl/auth-server/models"
+	"gopkg.in/validator.v2"
 	"net/http"
 )
 
@@ -41,6 +42,11 @@ func (s service) RegisterUser() http.HandlerFunc{
 		if err!=nil{
 			logger.Error(fmt.Sprintf("%v",err),logger.TraceRequestWithContext(r.Context()))
 			SendErrorResponse(w, CodeInvalidRegistrationData)
+			return
+		}
+
+		if err:=validator.Validate(registerUserRequest);err!=nil{
+			SendErrorResponse(w,fmt.Sprintf("%v",err))
 			return
 		}
 

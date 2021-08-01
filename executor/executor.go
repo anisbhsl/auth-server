@@ -29,8 +29,6 @@ func NewExecutor(config *utils.AppConfig) *Executor {
 }
 
 func (ex *Executor) Execute() {
-	//initialize store connection
-
 	//spin up server
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", ex.Config.HostAddr, ex.Config.Port),

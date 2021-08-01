@@ -112,10 +112,11 @@ func (s service) VerifyToken(signedJWT string) (*models.UserClaims,error) {
 
 func (s service) TokenRefresh(token string) (models.Token, error) {
 	claims,err:=s.VerifyToken(token)
-	if err!=nil{
+	if err!=nil || claims.TokenType==tokenType.Access{
 		logger.Error(fmt.Sprintf("%v",err))
 		return models.Token{},fmt.Errorf("Invalid Token")
 	}
+
 	signedTokens,err:=s.GenerateToken(claims.Email)
 	if err!=nil{
 		return models.Token{},nil

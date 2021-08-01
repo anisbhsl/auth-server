@@ -12,4 +12,5 @@ require (
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/zap v1.18.1
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
+	gopkg.in/validator.v2 v2.0.0-20210331031555-b37d688a7fb0
 )

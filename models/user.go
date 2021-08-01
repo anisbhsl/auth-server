@@ -2,7 +2,7 @@ package models
 
 type User struct {
 	ID           string `json:"id"`
-	Email        string `json:"email"`
+	Email        string `json:"email" validate:"nonzero"`
 	Name         string `json:"name"`
 	Location     string `json:"location"`
 	About        string `json:"about"`
@@ -10,11 +10,11 @@ type User struct {
 }
 
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"nonzero"`
+	Password string `json:"password" validate:"nonzero"`
 }
 
 type RegisterUserRequest struct {
 	User
-	Password string `json:"password"`
+	Password string `json:"password" validate:"nonzero"`
 }

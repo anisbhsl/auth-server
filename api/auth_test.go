@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/anisbhsl/auth-server/mock"
 	"github.com/anisbhsl/auth-server/models"
 	"github.com/gorilla/mux"
@@ -23,11 +24,12 @@ func TestLogin(t *testing.T) {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/v1/auth/login", service.Login()).Methods("POST")
 	out := httptest.NewRecorder()
-	body := `{
-	"email":"bhusal.anish12@gmail.com",
-	"password":"letmeinplease"
-	}`
-	in := httptest.NewRequest("POST", "/api/v1/auth/login", strings.NewReader(body))
+	bodyInBytes,_:=json.Marshal(models.LoginRequest{
+		Email:    "bhusal.anish12@gmail.com",
+		Password: "letmeinplease",
+	})
+
+	in := httptest.NewRequest("POST", "/api/v1/auth/login", strings.NewReader(string(bodyInBytes)))
 	r.ServeHTTP(out, in)
 	assert.Equal(t,200,out.Code)
 	assert.JSONEq(t,`{"data":{"access_token":"213","refresh_token":"123"},"success":true}`,out.Body.String())
@@ -36,12 +38,12 @@ func TestLogin(t *testing.T) {
 func TestRefreshToken(t *testing.T){
 	service := New(mock.AuthService{AccessToken: "213",RefreshToken: "123"},mock.Store{})
 	r := mux.NewRouter()
-	r.HandleFunc("/api/v1/auth/refresh-token", service.Login()).Methods("POST")
+	r.HandleFunc("/api/v1/auth/refresh-token", service.RefreshToken()).Methods("POST")
 	out := httptest.NewRecorder()
-	body := `{
-	"refresh-token":123
-	}`
-	in := httptest.NewRequest("POST", "/api/v1/auth/refresh-token", strings.NewReader(body))
+	bodyInBytes,_ :=json.Marshal(models.Token{
+		RefreshToken: "123",
+	})
+	in := httptest.NewRequest("POST", "/api/v1/auth/refresh-token", strings.NewReader(string(bodyInBytes)))
 	r.ServeHTTP(out, in)
 	assert.Equal(t,200,out.Code)
 	assert.JSONEq(t,`{"data":{"access_token":"213","refresh_token":"123"},"success":true}`,out.Body.String())

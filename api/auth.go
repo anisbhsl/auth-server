@@ -6,6 +6,7 @@ import (
 	"github.com/anisbhsl/auth-server/logger"
 	"github.com/anisbhsl/auth-server/models"
 	"net/http"
+	"gopkg.in/validator.v2"
 )
 
 func (s service) Login() http.HandlerFunc{
@@ -15,6 +16,11 @@ func (s service) Login() http.HandlerFunc{
 		if err!=nil{
 			logger.Error(fmt.Sprintf("%v",err),logger.TraceRequestWithContext(r.Context()))
 			SendErrorResponse(w,CodeInvalidLoginCredentials)
+			return
+		}
+
+		if err:=validator.Validate(loginRequest);err!=nil{
+			SendErrorResponse(w,fmt.Sprintf("%v",err))
 			return
 		}
 
@@ -52,6 +58,11 @@ func (s service) RefreshToken() http.HandlerFunc{
 		if err!=nil{
 			logger.Error(fmt.Sprintf("%v",logger.TraceRequestWithContext(r.Context())))
 			SendErrorResponse(w,CodeInvalidRegistrationData)
+			return
+		}
+
+		if err:=validator.Validate(refreshToken);err!=nil{
+			SendErrorResponse(w,fmt.Sprintf("%v",err))
 			return
 		}
 
